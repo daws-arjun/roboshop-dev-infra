@@ -50,6 +50,7 @@ resource "terraform_data" "catalogue" {
 #   depends_on = [terraform_data.catalogue]
 # }
 
+# # AMI 
 # resource "aws_ami_from_instance" "catalogue" {
 #   name               = "${local.common_name_suffix}-catalogue-ami"
 #   source_instance_id = aws_instance.catalogue.id
