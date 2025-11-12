@@ -1,6 +1,6 @@
-################
-SSL Certificate
-################
+#########################
+# SSL Certificate
+#########################
 
 resource "aws_acm_certificate" "roboshop" {
   domain_name       = "*.${var.domain_name}"
@@ -18,9 +18,9 @@ resource "aws_acm_certificate" "roboshop" {
   }
 }
 
-###############
-Route53 Record
-###############
+#########################
+# Route53 Record
+#########################
 
 resource "aws_route53_record" "roboshop" {
   for_each = {
@@ -39,9 +39,9 @@ resource "aws_route53_record" "roboshop" {
   zone_id         = var.zone_id
 }
 
-##########################
-SSL Certificate validation
-##########################
+#########################
+# SSL Certificate Validation
+#########################
 
 resource "aws_acm_certificate_validation" "roboshop" {
   certificate_arn         = aws_acm_certificate.roboshop.arn
