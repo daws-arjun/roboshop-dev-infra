@@ -93,6 +93,9 @@ resource "aws_launch_template" "catalogue" {
 
   vpc_security_group_ids = [local.catalogue_sg_id]
 
+  # when we run terraform apply again, a new version will be created with new AMI ID
+  update_default_version = true
+
   # tags attached to the instance
   tag_specifications {
     resource_type = "instance"
@@ -143,6 +146,14 @@ resource "aws_autoscaling_group" "catalogue" {
   vpc_zone_identifier       = local.private_subnet_ids
   target_group_arns = [aws_lb_target_group.catalogue.arn]
   
+  instance_refresh {
+    strategy = "Rolling"
+    preferences {
+      min_healthy_percentage = 50 # atleast 50% of the instances should be up and running
+    }
+    triggers = ["launch_template"]
+  }
+
   dynamic "tag" {  # we will get the iterator with name as tag
     for_each = merge(
       local.common_tags,
@@ -164,7 +175,7 @@ resource "aws_autoscaling_group" "catalogue" {
 }
 
 # autoscaling policy
-resource "aws_autoscaling_policy" "example" {
+resource "aws_autoscaling_policy" "catalogue" {
   autoscaling_group_name = aws_autoscaling_group.catalogue.name
   name                   = "${local.common_name_suffix}-catalogue"
   policy_type            = "TargetTrackingScaling"
