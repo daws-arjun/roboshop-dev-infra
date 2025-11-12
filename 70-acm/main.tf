@@ -1,3 +1,7 @@
+################
+SSL Certificate
+################
+
 resource "aws_acm_certificate" "roboshop" {
   domain_name       = "*.${var.domain_name}"
   validation_method = "DNS"
@@ -14,6 +18,10 @@ resource "aws_acm_certificate" "roboshop" {
   }
 }
 
+###############
+Route53 Record
+###############
+
 resource "aws_route53_record" "roboshop" {
   for_each = {
     for dvo in aws_acm_certificate.roboshop.domain_validation_options : dvo.domain_name => {
@@ -26,10 +34,14 @@ resource "aws_route53_record" "roboshop" {
   allow_overwrite = true
   name            = each.value.name
   records         = [each.value.record]
-  ttl             = 1
+  ttl             = 1      # fast validation ttl 1, in realtime we are using ttl 3600
   type            = each.value.type
   zone_id         = var.zone_id
 }
+
+##########################
+SSL Certificate validation
+##########################
 
 resource "aws_acm_certificate_validation" "roboshop" {
   certificate_arn         = aws_acm_certificate.roboshop.arn
