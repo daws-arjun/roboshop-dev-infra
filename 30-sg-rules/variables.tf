@@ -1,7 +1,17 @@
+###############################################
+# Project Name
+###############################################
 variable "project_name" {
-    default = "roboshop"
+  type        = string
+  default     = "roboshop"
+  description = "Name of the project used for tagging and naming AWS resources."
 }
 
+###############################################
+# Deployment Environment
+###############################################
 variable "environment" {
-    default = "dev"
+  type        = string
+  default     = "dev"
+  description = "Environment to deploy into (e.g., dev, qa, stage, prod)."
 }
