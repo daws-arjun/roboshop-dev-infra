@@ -325,6 +325,68 @@ resource "aws_security_group_rule" "bastion_laptop" {
 }
 
 # -------------------------
+# OpenVPN Access Rules
+# -------------------------
+resource "aws_security_group_rule" "open_vpn_public" {
+  type              = "ingress"
+  security_group_id = local.open_vpn_sg_id
+  cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+}
+
+# OpenVPN Admin UI (TCP 943)
+resource "aws_security_group_rule" "open_vpn_943" {
+  type              = "ingress"
+  security_group_id = local.open_vpn_sg_id
+  cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = 943
+  to_port           = 943
+  protocol          = "tcp"
+}
+
+# OpenVPN HTTPS fallback (TCP 443)
+resource "aws_security_group_rule" "open_vpn_443" {
+  type              = "ingress"
+  security_group_id = local.open_vpn_sg_id
+  cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+}
+
+# OpenVPN UDP port (1194)
+resource "aws_security_group_rule" "open_vpn_1194" {
+  type              = "ingress"
+  security_group_id = local.open_vpn_sg_id
+  cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = 1194
+  to_port           = 1194
+  protocol          = "udp"
+}
+
+# Cloud ssh access
+resource "aws_security_group_rule" "catalogue_vpn" {
+  type              = "ingress"
+  security_group_id = local.catalogue_sg_id
+  source_security_group_id = local.open_vpn_sg_id
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+}
+
+# For Developers
+resource "aws_security_group_rule" "catalogue_vpn_8080" {
+  type              = "ingress"
+  security_group_id = local.catalogue_sg_id
+  source_security_group_id = local.open_vpn_sg_id
+  from_port         = 8080
+  to_port           = 8080
+  protocol          = "tcp"
+}
+
+# -------------------------
 # Intentionally disabled (design mistake).
 # These rules allow direct component-to-component traffic and were removed.
 # Traffic must go via backend ALB for security / routing consistency.

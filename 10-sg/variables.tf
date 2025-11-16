@@ -1,25 +1,50 @@
+###############################################
+# Project Name
+###############################################
 variable "project_name" {
-    default = "roboshop"
+  type        = string
+  default     = "roboshop"
 }
 
+###############################################
+# Environment
+###############################################
 variable "environment" {
-    default = "dev"
+  type        = string
+  default     = "dev"
 }
 
+###############################################
+# Security Group Names (used to fetch from SSM)
+###############################################
 variable "sg_names" {
-    default = [
-        # databases
-        "mongodb", "redis", "mysql", "rabbitmq",
-        # backend
-        "catalogue", "user", "cart", "shipping", "payment",
-        # frontend
-        "frontend",
-        # bastion
-        "bastion",
-        # frontend load balancer
-        "frontend_alb",
-        # backend ALB
-        "backend_alb"
-    ]
-}
+  type = list(string)
 
+  default = [
+    # --- Databases ---
+    "mongodb",
+    "redis",
+    "mysql",
+    "rabbitmq",
+
+    # --- Backend Services ---
+    "catalogue",
+    "user",
+    "cart",
+    "shipping",
+    "payment",
+
+    # --- Frontend Service ---
+    "frontend",
+
+    # --- Bastion Host ---
+    "bastion",
+
+    # --- Load Balancers ---
+    "frontend_alb",
+    "backend_alb",
+
+    # --- OpenVPN Server ---
+    "open_vpn"
+  ]
+}
