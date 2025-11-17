@@ -366,24 +366,43 @@ resource "aws_security_group_rule" "open_vpn_1194" {
   protocol          = "udp"
 }
 
-# Cloud ssh access
+##########################################
+# VPN → Catalogue Access
+##########################################
+
+# For SSH access
 resource "aws_security_group_rule" "catalogue_vpn" {
-  type              = "ingress"
-  security_group_id = local.catalogue_sg_id
+  type                     = "ingress"
+  security_group_id        = local.catalogue_sg_id
   source_security_group_id = local.open_vpn_sg_id
-  from_port         = 22
-  to_port           = 22
-  protocol          = "tcp"
+  from_port                = 22
+  to_port                  = 22
+  protocol                 = "tcp"
 }
 
-# For Developers
+# For Developers (port 8080)
 resource "aws_security_group_rule" "catalogue_vpn_8080" {
-  type              = "ingress"
-  security_group_id = local.catalogue_sg_id
+  type                     = "ingress"
+  security_group_id        = local.catalogue_sg_id
   source_security_group_id = local.open_vpn_sg_id
-  from_port         = 8080
-  to_port           = 8080
-  protocol          = "tcp"
+  from_port                = 8080
+  to_port                  = 8080
+  protocol                 = "tcp"
+}
+
+##########################################
+# VPN → All Components (Dynamic Rules)
+##########################################
+
+resource "aws_security_group_rule" "components_vpn" {
+  for_each = local.vpn_ingress_rules
+
+  type                     = "ingress"
+  security_group_id        = each.value.sg_id
+  source_security_group_id = local.open_vpn_sg_id
+  from_port                = each.value.port
+  to_port                  = each.value.port
+  protocol                 = "tcp"
 }
 
 # -------------------------
